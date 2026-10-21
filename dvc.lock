@@ -152,3 +152,50 @@ stages:
       md5: 1ae85143b48b8125c60c44e72cad95aa.dir
       size: 45216090
       nfiles: 3
+  freeze:
+    cmd: python scripts/finalize.py freeze
+    deps:
+    - path: data/prepared/summary.json
+      hash: md5
+      md5: fc1f6482dce25475d3ce4dc0c65c0a34
+      size: 2229
+      isexec: true
+    - path: metrics/validation.json
+      hash: md5
+      md5: 420572dcb677a818351a397e5c939b0d
+      size: 173
+    - path: models/current
+      hash: md5
+      md5: dcef2b519827ded061a2d03bba7f230e.dir
+      size: 1601238
+      nfiles: 2
+    - path: results/validation_comparison.json
+      hash: md5
+      md5: 8c9eff4bc7f10c9461b81b8e95e257d7
+      size: 5246
+    - path: scripts/augment_data.py
+      hash: md5
+      md5: f026750ce09394f73a0494c5f257adff
+      size: 16005
+      isexec: true
+    - path: scripts/finalize.py
+      hash: md5
+      md5: c92f8d85b462cdb5de4cc291c8148e4e
+      size: 14365
+      isexec: true
+    - path: scripts/model.py
+      hash: md5
+      md5: 35d3565a8473d3bac6b2c9acfc7093ed
+      size: 16394
+      isexec: true
+    - path: scripts/prepare_data.py
+      hash: md5
+      md5: ee270f450cbb9b53b6aa7129847ab3f6
+      size: 14013
+      isexec: true
+    outs:
+    - path: models/selected
+      hash: md5
+      md5: e903c598c502cdb2adca21deda382a95.dir
+      size: 1601805
+      nfiles: 3

@@ -48,3 +48,43 @@ stages:
       - augmentation
     outs:
       - data/augmented
+  freeze:
+    cmd: python scripts/finalize.py freeze
+    deps:
+      - scripts/finalize.py
+      - scripts/model.py
+      - scripts/prepare_data.py
+      - scripts/augment_data.py
+      - models/current
+      - metrics/validation.json
+      - results/validation_comparison.json
+      - data/prepared/summary.json
+    outs:
+      - models/selected
+  test:
+    cmd: python scripts/finalize.py test
+    deps:
+      - scripts/finalize.py
+      - scripts/model.py
+      - scripts/prepare_data.py
+      - scripts/augment_data.py
+      - models/selected
+      - data/prepared/test.npz
+      - data/prepared/summary.json
+    metrics:
+      - metrics/test.json:
+          cache: true
+    outs:
+      - reports/test_details.json
+      - reports/test_predictions.npz
+      - results/final_test.json:
+          cache: false
+  plots:
+    cmd: python scripts/finalize.py plots
+    deps:
+      - scripts/finalize.py
+      - results/validation_comparison.json
+      - reports/test_details.json
+    outs:
+      - results/figures:
+          cache: false
