@@ -1,0 +1,180 @@
+{
+  "augmented_training_sha256": "f070792596dacacbcf3f45a7405c33fff06b9a8c5b98d265ac42493bd0646828",
+  "best_validation_experiment": "original-mlp-300",
+  "comparisons": [
+    {
+      "accuracy_change_percentage_points": -2.1599999999999953,
+      "augmented": {
+        "data_split_parameters": {
+          "seed": 42,
+          "validation_per_class": 1000
+        },
+        "dataset": "augmented",
+        "experiment": "augmented-logreg",
+        "metrics": {
+          "accuracy": 0.8243,
+          "converged": 1,
+          "fit_seconds": 149.7342941040115,
+          "macro_f1": 0.8225479731547471,
+          "training_samples": 100000,
+          "validation_samples": 10000
+        },
+        "model": "logreg",
+        "parameters": {
+          "C": 1.0,
+          "max_iter": 2000,
+          "tol": 0.0001
+        },
+        "revision": "8674d3ddcf9739e5d9b027410e2cd82905876fee",
+        "seed": 42
+      },
+      "macro_f1_change": -0.022187257059275156,
+      "model": "logreg",
+      "original": {
+        "data_split_parameters": {
+          "seed": 42,
+          "validation_per_class": 1000
+        },
+        "dataset": "prepared",
+        "experiment": "original-logreg-2000",
+        "metrics": {
+          "accuracy": 0.8459,
+          "converged": 1,
+          "fit_seconds": 73.11761041099089,
+          "macro_f1": 0.8447352302140223,
+          "training_samples": 50000,
+          "validation_samples": 10000
+        },
+        "model": "logreg",
+        "parameters": {
+          "C": 1.0,
+          "max_iter": 2000,
+          "tol": 0.0001
+        },
+        "revision": "9157883b7dfa1b755a425e381df72d1253378800",
+        "seed": 42
+      }
+    },
+    {
+      "accuracy_change_percentage_points": -0.8400000000000074,
+      "augmented": {
+        "data_split_parameters": {
+          "seed": 42,
+          "validation_per_class": 1000
+        },
+        "dataset": "augmented",
+        "experiment": "augmented-random_forest",
+        "metrics": {
+          "accuracy": 0.8795,
+          "converged": 1,
+          "fit_seconds": 195.62661303501227,
+          "macro_f1": 0.8772360500399703,
+          "training_samples": 100000,
+          "validation_samples": 10000
+        },
+        "model": "random_forest",
+        "parameters": {
+          "max_depth": null,
+          "min_samples_leaf": 1,
+          "n_estimators": 100
+        },
+        "revision": "96442f4db503c668eb510f9bb7c5dd68f02e59de",
+        "seed": 42
+      },
+      "macro_f1_change": -0.00924118294393761,
+      "model": "random_forest",
+      "original": {
+        "data_split_parameters": {
+          "seed": 42,
+          "validation_per_class": 1000
+        },
+        "dataset": "prepared",
+        "experiment": "original-random_forest",
+        "metrics": {
+          "accuracy": 0.8879,
+          "converged": 1,
+          "fit_seconds": 76.50535315601155,
+          "macro_f1": 0.8864772329839079,
+          "training_samples": 50000,
+          "validation_samples": 10000
+        },
+        "model": "random_forest",
+        "parameters": {
+          "max_depth": null,
+          "min_samples_leaf": 1,
+          "n_estimators": 100
+        },
+        "revision": "1ce00a46d5bcc9fe6f96d172c3634a7f98c5620a",
+        "seed": 42
+      }
+    },
+    {
+      "accuracy_change_percentage_points": -1.3000000000000012,
+      "augmented": {
+        "data_split_parameters": {
+          "seed": 42,
+          "validation_per_class": 1000
+        },
+        "dataset": "augmented",
+        "experiment": "augmented-mlp-300",
+        "metrics": {
+          "accuracy": 0.8794,
+          "converged": 1,
+          "fit_seconds": 197.05203120800434,
+          "macro_f1": 0.878212950529551,
+          "training_samples": 100000,
+          "validation_samples": 10000
+        },
+        "model": "mlp",
+        "parameters": {
+          "alpha": 0.0001,
+          "batch_size": 256,
+          "hidden_layer_sizes": [
+            128
+          ],
+          "learning_rate_init": 0.001,
+          "max_iter": 300,
+          "tol": 0.0001
+        },
+        "revision": "c9f78d0c38ad73a952e30051d42d86f2c76449ba",
+        "seed": 42
+      },
+      "macro_f1_change": -0.013560162044613855,
+      "model": "mlp",
+      "original": {
+        "data_split_parameters": {
+          "seed": 42,
+          "validation_per_class": 1000
+        },
+        "dataset": "prepared",
+        "experiment": "original-mlp-300",
+        "metrics": {
+          "accuracy": 0.8924,
+          "converged": 1,
+          "fit_seconds": 42.25007141599781,
+          "macro_f1": 0.8917731125741648,
+          "training_samples": 50000,
+          "validation_samples": 10000
+        },
+        "model": "mlp",
+        "parameters": {
+          "alpha": 0.0001,
+          "batch_size": 256,
+          "hidden_layer_sizes": [
+            128
+          ],
+          "learning_rate_init": 0.001,
+          "max_iter": 300,
+          "tol": 0.0001
+        },
+        "revision": "ff5efafd3151b6b5fcfe258fe57af2190111c451",
+        "seed": 42
+      }
+    }
+  ],
+  "evaluation_split": "validation",
+  "selection_metric": "macro_f1",
+  "test_evaluated": false,
+  "validation_samples": 10000,
+  "validation_sha256": "0276c467fdc74370793d6e7b02a98d3622653747c12a29ecb38442573d097e9a"
+}
