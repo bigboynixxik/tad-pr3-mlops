@@ -9,3 +9,31 @@ stages:
       - data.validation_per_class
     outs:
       - data/prepared
+  train:
+    cmd: python scripts/model.py train
+    deps:
+      - scripts/model.py
+      - scripts/prepare_data.py
+      - data/prepared/train.npz
+      - data/prepared/summary.json
+    params:
+      - train
+      - logreg
+      - random_forest
+      - mlp
+    outs:
+      - models/current
+  evaluate:
+    cmd: python scripts/model.py evaluate
+    deps:
+      - scripts/model.py
+      - scripts/prepare_data.py
+      - models/current
+      - data/prepared/validation.npz
+      - data/prepared/summary.json
+    metrics:
+      - metrics/validation.json:
+          cache: true
+    outs:
+      - reports/validation_details.json
+      - reports/validation_predictions.npz
