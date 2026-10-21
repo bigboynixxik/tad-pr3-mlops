@@ -231,7 +231,8 @@ def build(prepared: Path, output: Path, config: dict, per_class: int = 0) -> dic
     return report
 
 
-def check(prepared: Path, output: Path, config: dict) -> dict:
+def load_augmented(prepared: Path, output: Path, config: dict,
+                   verify_pixels: bool = False) -> tuple[dict, dict]:
     config = validate_config(config)
     saved = json.loads((output / "summary.json").read_text(encoding="utf-8"))
     original, descriptions, held_out = load_base(prepared)
@@ -266,14 +267,19 @@ def check(prepared: Path, output: Path, config: dict) -> dict:
             or saved.get("held_out_splits_unchanged") is not True
             or saved.get("interpolation") != "linear_constant_zero"):
         raise ValueError("Augmentation summary metadata is inconsistent.")
-    for variant in range(1, config["copies_per_image"] + 1):
-        for index, image in enumerate(source["images"]):
-            expected = transform(image, int(source["source_ids"][index]), variant, config)
-            if not np.array_equal(part["images"][variant * count + index], expected):
-                raise ValueError("Augmented pixels do not match the recorded seed and parameters.")
-            if (index + 1) % 5000 == 0:
-                print(f"Verifying copy {variant}: {index + 1}/{count}", file=sys.stderr, flush=True)
-    return saved
+    if verify_pixels:
+        for variant in range(1, config["copies_per_image"] + 1):
+            for index, image in enumerate(source["images"]):
+                expected = transform(image, int(source["source_ids"][index]), variant, config)
+                if not np.array_equal(part["images"][variant * count + index], expected):
+                    raise ValueError("Augmented pixels do not match the recorded seed and parameters.")
+                if (index + 1) % 5000 == 0:
+                    print(f"Verifying copy {variant}: {index + 1}/{count}", file=sys.stderr, flush=True)
+    return part, saved
+
+
+def check(prepared: Path, output: Path, config: dict) -> dict:
+    return load_augmented(prepared, output, config, verify_pixels=True)[1]
 
 
 def main() -> int:

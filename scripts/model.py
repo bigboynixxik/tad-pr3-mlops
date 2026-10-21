@@ -29,6 +29,7 @@ from threadpoolctl import threadpool_limits
 import yaml
 
 from prepare_data import CLASSES, atomic_write, digest
+from augment_data import load_augmented, validate_config as validate_augmentation
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -58,6 +59,11 @@ def validate_config(config: object) -> dict:
             raise ValueError(f"params.yaml must contain a {name} mapping.")
         result[name] = deepcopy(config[name])
     train = result["train"]
+    train.setdefault("dataset", "prepared")
+    if train["dataset"] not in ("prepared", "augmented"):
+        raise ValueError("train.dataset must be prepared or augmented.")
+    if train["dataset"] == "augmented":
+        result["augmentation"] = validate_augmentation(config.get("augmentation"))
     if train.get("model") not in MODEL_NAMES:
         raise ValueError(f"train.model must be one of {MODEL_NAMES}.")
     integer(train.get("seed"), "train.seed", 0, 2**32 - 1)
@@ -82,7 +88,7 @@ def validate_config(config: object) -> dict:
         positive(mlp.get(name), f"mlp.{name}")
     # Reject misspelled or unsupported parameters instead of silently ignoring them.
     expected = {
-        "train": {"model", "seed", "limit_per_class"},
+        "train": {"model", "seed", "limit_per_class", "dataset"},
         "logreg": {"C", "max_iter", "tol"},
         "random_forest": {"n_estimators", "max_depth", "min_samples_leaf"},
         "mlp": {"hidden_layer_sizes", "max_iter", "batch_size", "learning_rate_init", "alpha", "tol"},
@@ -136,12 +142,16 @@ def subset(part: dict, per_class: int, seed: int) -> dict:
         return part
     rng = np.random.default_rng(seed)
     selected = []
+    originals = part.get("variant_ids", np.zeros(len(part["labels"]), dtype=np.uint8)) == 0
     for label in range(10):
-        indices = np.flatnonzero(part["labels"] == label)
+        indices = np.flatnonzero((part["labels"] == label) & originals)
         if len(indices) < per_class:
-            raise ValueError(f"limit_per_class exceeds available samples for class {label}.")
+            raise ValueError(f"limit_per_class exceeds available original samples for class {label}.")
         selected.extend(rng.choice(indices, size=per_class, replace=False).tolist())
     selected = np.sort(selected)
+    if "variant_ids" in part:
+        # Keep every copy of a selected original record together.
+        selected = np.flatnonzero(np.isin(part["source_ids"], part["source_ids"][selected]))
     return {key: value[selected] if isinstance(value, np.ndarray) else value
             for key, value in part.items()}
 
@@ -195,8 +205,14 @@ def write_json(path: Path, value: dict) -> None:
 def train(config: dict, prepared: Path, directory: Path) -> dict:
     config = validate_config(config)
     name = config["train"]["model"]
-    part = subset(load_split(prepared, "train"), config["train"]["limit_per_class"],
-                  config["train"]["seed"])
+    if config["train"]["dataset"] == "augmented":
+        loaded, report = load_augmented(prepared, prepared.parent / "augmented", config["augmentation"])
+        if report["purpose"] != "augmented_training":
+            raise ValueError("Full training requires the full augmented dataset, not smoke outputs.")
+        loaded["sha256"] = report["train"]["sha256"]
+    else:
+        loaded = load_split(prepared, "train")
+    part = subset(loaded, config["train"]["limit_per_class"], config["train"]["seed"])
     pipeline = estimator(config)
     inputs = features(part["images"])
     started = time.perf_counter()
@@ -218,6 +234,13 @@ def train(config: dict, prepared: Path, directory: Path) -> dict:
         "parameters": config[name],
         "train": config["train"],
         "training_samples": len(inputs),
+        "dataset": config["train"]["dataset"],
+        "training_original_samples": int(np.count_nonzero(part["variant_ids"] == 0))
+            if "variant_ids" in part else len(inputs),
+        "training_augmented_samples": int(np.count_nonzero(part["variant_ids"] != 0))
+            if "variant_ids" in part else 0,
+        "unique_training_source_records": int(np.unique(part["source_ids"]).size),
+        "augmentation": config.get("augmentation"),
         "training_class_counts": np.bincount(part["labels"], minlength=10).tolist(),
         "training_file_sha256": part["sha256"],
         "training_source_ids_sha256": hashlib.sha256(

@@ -14,8 +14,8 @@ stages:
     deps:
       - scripts/model.py
       - scripts/prepare_data.py
-      - data/prepared/train.npz
-      - data/prepared/summary.json
+      - scripts/augment_data.py
+      - data/${train.dataset}
     params:
       - train
       - logreg
@@ -28,6 +28,7 @@ stages:
     deps:
       - scripts/model.py
       - scripts/prepare_data.py
+      - scripts/augment_data.py
       - models/current
       - data/prepared/validation.npz
       - data/prepared/summary.json

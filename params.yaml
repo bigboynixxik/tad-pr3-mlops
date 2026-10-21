@@ -2,6 +2,7 @@ data:
   seed: 42
   validation_per_class: 1000
 train:
+  dataset: prepared
   model: logreg
   seed: 42
   limit_per_class: 0

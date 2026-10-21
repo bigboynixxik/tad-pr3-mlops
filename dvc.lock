@@ -124,8 +124,8 @@ stages:
       nfiles: 4
     - path: scripts/augment_data.py
       hash: md5
-      md5: 0ea7504d7c97869da8c90f484c7421d0
-      size: 15739
+      md5: f026750ce09394f73a0494c5f257adff
+      size: 16005
       isexec: true
     - path: scripts/prepare_data.py
       hash: md5

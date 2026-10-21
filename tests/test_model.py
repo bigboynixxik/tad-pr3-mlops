@@ -14,11 +14,13 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import model
+import augment_data as augmentation
 
 
 class ModelTests(unittest.TestCase):
     def setUp(self):
         self.config = model.read_config(model.ROOT / "params.yaml")
+        self.config["train"].update(dataset="prepared", seed=42, limit_per_class=0)
         self.config["logreg"]["max_iter"] = 80
         self.config["random_forest"].update(n_estimators=3, max_depth=4)
         self.config["mlp"].update(hidden_layer_sizes=[16], max_iter=5, batch_size=32)
@@ -29,6 +31,7 @@ class ModelTests(unittest.TestCase):
         self.manifest = {"dataset": "Fashion-MNIST", "class_names": list(model.CLASSES), "splits": {}}
         self.write_split("train", 10, 0)
         self.write_split("validation", 3, 1000)
+        self.write_split("test", 2, 2000)
 
     def tearDown(self):
         self.temporary.cleanup()
@@ -61,6 +64,78 @@ class ModelTests(unittest.TestCase):
                                      directory / "reports")
         return directory, metrics
 
+    def make_augmented_config(self):
+        config = deepcopy(self.config)
+        config["train"].update(dataset="augmented", limit_per_class=0)
+        config["augmentation"] = {
+            "seed": 42, "copies_per_image": 1, "rotation_degrees": 10.0,
+            "max_shift_pixels": 2, "horizontal_flip_probability": 0.5,
+        }
+        with contextlib.redirect_stderr(io.StringIO()):
+            augmentation.build(self.prepared, self.root / "augmented", config["augmentation"])
+        return config
+
+    def test_augmented_training_all_models_preserves_validation(self):
+        config = self.make_augmented_config()
+        validation_hash = model.digest(self.prepared / "validation.npz")
+        for name in model.MODEL_NAMES:
+            with self.subTest(model=name), contextlib.redirect_stderr(io.StringIO()):
+                config["train"]["model"] = name
+                directory = self.root / f"augmented-{name}"
+                metadata = model.train(config, self.prepared, directory)
+                metrics = model.evaluate(self.prepared, directory, directory / "metrics.json",
+                                         directory / "reports")
+                self.assertEqual(metadata["dataset"], "augmented")
+                self.assertEqual(metadata["training_original_samples"], 100)
+                self.assertEqual(metadata["training_augmented_samples"], 100)
+                self.assertEqual(metadata["unique_training_source_records"], 100)
+                self.assertEqual(metrics["training_samples"], 200)
+                self.assertEqual(metrics["validation_samples"], 30)
+                artifact = joblib.load(directory / "model.joblib")
+                self.assertEqual(len(artifact["training_source_ids"]), 200)
+                self.assertEqual(np.unique(artifact["training_source_ids"]).size, 100)
+                self.assertEqual(model.digest(self.prepared / "validation.npz"), validation_hash)
+
+    def test_augmented_subset_keeps_all_variants_of_selected_originals(self):
+        config = self.make_augmented_config()
+        part, _ = augmentation.load_augmented(self.prepared, self.root / "augmented",
+                                              config["augmentation"])
+        part["sha256"] = "fixture"
+        selected = model.subset(part, 3, 42)
+        self.assertEqual(len(selected["labels"]), 60)
+        pairs = np.column_stack((selected["source_ids"], selected["variant_ids"]))
+        self.assertEqual(np.unique(pairs, axis=0).shape[0], 60)
+        ids, counts = np.unique(selected["source_ids"], return_counts=True)
+        self.assertEqual(len(ids), 30)
+        np.testing.assert_array_equal(counts, np.full(30, 2))
+        original = model.subset(model.load_split(self.prepared, "train"), 3, 42)
+        np.testing.assert_array_equal(ids, original["source_ids"])
+        np.testing.assert_array_equal(np.bincount(selected["labels"]), [6] * 10)
+
+    def test_training_rejects_changed_augmentation_parameters(self):
+        config = self.make_augmented_config()
+        config["augmentation"]["seed"] = 43
+        with self.assertRaisesRegex(ValueError, "parameters"):
+            model.train(config, self.prepared, self.root / "invalid")
+        self.assertFalse((self.root / "invalid/model.joblib").exists())
+
+    def test_legacy_artifact_can_still_be_evaluated(self):
+        directory, before = self.train_and_evaluate("random_forest")
+        path = directory / "model.joblib"
+        artifact = joblib.load(path)
+        artifact["metadata"]["train"].pop("dataset")
+        for key in ("dataset", "training_original_samples", "training_augmented_samples",
+                    "unique_training_source_records", "augmentation"):
+            artifact["metadata"].pop(key)
+        joblib.dump(artifact, path)
+        model.write_json(directory / "training.json", {
+            **artifact["metadata"], "model_sha256": model.digest(path),
+        })
+        with contextlib.redirect_stderr(io.StringIO()):
+            after = model.evaluate(self.prepared, directory, directory / "metrics.json",
+                                   directory / "reports")
+        self.assertEqual(before, after)
+
     def test_pixels_are_flattened_and_normalized_without_mutating_input(self):
         images = np.array([np.full((28, 28), 255, np.uint8), np.zeros((28, 28), np.uint8)])
         transformed = model.features(images)
@@ -75,7 +150,7 @@ class ModelTests(unittest.TestCase):
 
     def test_invalid_configuration_is_rejected(self):
         changes = (
-            ("train", "model", "unknown"), ("train", "seed", True),
+            ("train", "model", "unknown"), ("train", "dataset", "unknown"), ("train", "seed", True),
             ("train", "seed", -1), ("train", "seed", 2**32),
             ("train", "limit_per_class", -1), ("logreg", "C", float("nan")),
             ("logreg", "max_iter", 0), ("logreg", "tol", float("inf")),
