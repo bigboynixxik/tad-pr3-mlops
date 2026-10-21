@@ -1,0 +1,17 @@
+name: tad-pr3-mlops
+
+services:
+  app:
+    image: tad-pr3-mlops:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    init: true
+    working_dir: /workspace
+    volumes:
+      - type: bind
+        source: .
+        target: /workspace
+        bind:
+          create_host_path: false

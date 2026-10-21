@@ -1,0 +1,16 @@
+.git
+.venv
+.dvc/cache
+.dvc/tmp
+.dvc/config.local
+__pycache__
+*.py[cod]
+.pytest_cache
+.env
+.env.*
+data
+models
+results
+artifacts
+.idea
+.vscode
