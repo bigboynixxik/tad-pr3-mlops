@@ -3,3 +3,4 @@
 # https://dvc.org/doc/user-guide/dvcignore
 .dvc-storage/
 /results/smoke/
+/results/augmentation-smoke/

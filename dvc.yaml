@@ -37,3 +37,13 @@ stages:
     outs:
       - reports/validation_details.json
       - reports/validation_predictions.npz
+  augment:
+    cmd: python scripts/augment_data.py prepare
+    deps:
+      - scripts/augment_data.py
+      - scripts/prepare_data.py
+      - data/prepared
+    params:
+      - augmentation
+    outs:
+      - data/augmented
