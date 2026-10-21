@@ -1,0 +1,11 @@
+stages:
+  prepare:
+    cmd: python scripts/prepare_data.py prepare
+    deps:
+      - scripts/prepare_data.py
+      - data/raw
+    params:
+      - data.seed
+      - data.validation_per_class
+    outs:
+      - data/prepared
