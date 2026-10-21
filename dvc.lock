@@ -22,3 +22,95 @@ stages:
       md5: 78624be6d6819bd3c9faa0141e8de182.dir
       size: 30971045
       nfiles: 4
+  train:
+    cmd: python scripts/model.py train
+    deps:
+    - path: data/prepared/summary.json
+      hash: md5
+      md5: fc1f6482dce25475d3ce4dc0c65c0a34
+      size: 2229
+      isexec: true
+    - path: data/prepared/train.npz
+      hash: md5
+      md5: 58c72fe8f63ec0a8cdcf11358902e02c
+      size: 22107543
+      isexec: true
+    - path: scripts/model.py
+      hash: md5
+      md5: bd4767d919ed6fce512c642b5f16fdab
+      size: 14866
+      isexec: true
+    - path: scripts/prepare_data.py
+      hash: md5
+      md5: ee270f450cbb9b53b6aa7129847ab3f6
+      size: 14013
+      isexec: true
+    params:
+      params.yaml:
+        logreg:
+          C: 1.0
+          max_iter: 2000
+          tol: 0.0001
+        mlp:
+          hidden_layer_sizes:
+          - 128
+          max_iter: 100
+          batch_size: 256
+          learning_rate_init: 0.001
+          alpha: 0.0001
+          tol: 0.0001
+        random_forest:
+          n_estimators: 100
+          max_depth:
+          min_samples_leaf: 1
+        train:
+          model: logreg
+          seed: 42
+          limit_per_class: 0
+    outs:
+    - path: models/current
+      hash: md5
+      md5: f5307232c81ee5ae58e3653cd10314cc.dir
+      size: 118874
+      nfiles: 2
+  evaluate:
+    cmd: python scripts/model.py evaluate
+    deps:
+    - path: data/prepared/summary.json
+      hash: md5
+      md5: fc1f6482dce25475d3ce4dc0c65c0a34
+      size: 2229
+      isexec: true
+    - path: data/prepared/validation.npz
+      hash: md5
+      md5: b350cfe7941298c65d3c5efbac9e7b7f
+      size: 4421788
+      isexec: true
+    - path: models/current
+      hash: md5
+      md5: f5307232c81ee5ae58e3653cd10314cc.dir
+      size: 118874
+      nfiles: 2
+    - path: scripts/model.py
+      hash: md5
+      md5: bd4767d919ed6fce512c642b5f16fdab
+      size: 14866
+      isexec: true
+    - path: scripts/prepare_data.py
+      hash: md5
+      md5: ee270f450cbb9b53b6aa7129847ab3f6
+      size: 14013
+      isexec: true
+    outs:
+    - path: metrics/validation.json
+      hash: md5
+      md5: c2092ab67c642803afe63c690438e626
+      size: 173
+    - path: reports/validation_details.json
+      hash: md5
+      md5: da8eca74c081e1326cf97d77dd592e7f
+      size: 4119
+    - path: reports/validation_predictions.npz
+      hash: md5
+      md5: 03e90975aa72572db596fb01020065b4
+      size: 25079

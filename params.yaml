@@ -7,14 +7,15 @@ train:
   limit_per_class: 0
 logreg:
   C: 1.0
-  max_iter: 300
+  max_iter: 2000
   tol: 0.0001
 random_forest:
   n_estimators: 100
-  max_depth: null
+  max_depth:
   min_samples_leaf: 1
 mlp:
-  hidden_layer_sizes: [128]
+  hidden_layer_sizes:
+  - 128
   max_iter: 100
   batch_size: 256
   learning_rate_init: 0.001
