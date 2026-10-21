@@ -199,3 +199,80 @@ stages:
       md5: e903c598c502cdb2adca21deda382a95.dir
       size: 1601805
       nfiles: 3
+  test:
+    cmd: python scripts/finalize.py test
+    deps:
+    - path: data/prepared/summary.json
+      hash: md5
+      md5: fc1f6482dce25475d3ce4dc0c65c0a34
+      size: 2229
+      isexec: true
+    - path: data/prepared/test.npz
+      hash: md5
+      md5: 997b6c77f140d50249d98713d19bf5b4
+      size: 4439485
+      isexec: true
+    - path: models/selected
+      hash: md5
+      md5: e903c598c502cdb2adca21deda382a95.dir
+      size: 1601805
+      nfiles: 3
+    - path: scripts/augment_data.py
+      hash: md5
+      md5: f026750ce09394f73a0494c5f257adff
+      size: 16005
+      isexec: true
+    - path: scripts/finalize.py
+      hash: md5
+      md5: c92f8d85b462cdb5de4cc291c8148e4e
+      size: 14365
+      isexec: true
+    - path: scripts/model.py
+      hash: md5
+      md5: 35d3565a8473d3bac6b2c9acfc7093ed
+      size: 16394
+      isexec: true
+    - path: scripts/prepare_data.py
+      hash: md5
+      md5: ee270f450cbb9b53b6aa7129847ab3f6
+      size: 14013
+      isexec: true
+    outs:
+    - path: metrics/test.json
+      hash: md5
+      md5: 27964bba70f1e3bea20d06b94fb778cf
+      size: 113
+    - path: reports/test_details.json
+      hash: md5
+      md5: a1f3d690dfb61c8ca8cea3ac8646a8d7
+      size: 3842
+    - path: reports/test_predictions.npz
+      hash: md5
+      md5: c62128a4bdc75e15db626906e541a8bd
+      size: 24742
+    - path: results/final_test.json
+      hash: md5
+      md5: b45eb87b49657dc56b5cdf7ab7d87aa4
+      size: 1189
+  plots:
+    cmd: python scripts/finalize.py plots
+    deps:
+    - path: reports/test_details.json
+      hash: md5
+      md5: a1f3d690dfb61c8ca8cea3ac8646a8d7
+      size: 3842
+    - path: results/validation_comparison.json
+      hash: md5
+      md5: 8c9eff4bc7f10c9461b81b8e95e257d7
+      size: 5246
+    - path: scripts/finalize.py
+      hash: md5
+      md5: c92f8d85b462cdb5de4cc291c8148e4e
+      size: 14365
+      isexec: true
+    outs:
+    - path: results/figures
+      hash: md5
+      md5: 590a48e52a60fe631de4c2922f41e2b2.dir
+      size: 973529
+      nfiles: 8

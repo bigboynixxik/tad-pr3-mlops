@@ -1,0 +1,38 @@
+{
+  "dataset": "prepared",
+  "epochs_completed": 74,
+  "evaluation_split": "test",
+  "metrics": {
+    "accuracy": 0.8789,
+    "macro_f1": 0.8782056861279107,
+    "test_samples": 10000,
+    "training_samples": 50000
+  },
+  "model": "mlp",
+  "parameters": {
+    "alpha": 0.0001,
+    "batch_size": 256,
+    "hidden_layer_sizes": [
+      128
+    ],
+    "learning_rate_init": 0.001,
+    "max_iter": 300,
+    "tol": 0.0001
+  },
+  "seed": 42,
+  "selection": {
+    "decision_made_before_test": true,
+    "experiment": "original-mlp-300",
+    "experiment_revision": "ff5efafd3151b6b5fcfe258fe57af2190111c451",
+    "model_sha256": "4b623beadab6e7ebba81baa53178685444dc576d246bb0dbaad18a408de71adc",
+    "selection_metric": "macro_f1",
+    "selection_split": "validation",
+    "training_metadata_sha256": "ec5481ac704648e745f72f8c7cc6659bbcaa887e101d1db491cd8fe958361214",
+    "validation_accuracy": 0.8924,
+    "validation_macro_f1": 0.8917731125741648,
+    "validation_sha256": "0276c467fdc74370793d6e7b02a98d3622653747c12a29ecb38442573d097e9a"
+  },
+  "source_id_overlap": 0,
+  "test_sha256": "9ac98c411415513e5e802e4b848678f63dcb399c384748d9e14d280a61fbb584",
+  "test_used_for_selection": false
+}
