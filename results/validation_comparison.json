@@ -1,131 +1,142 @@
 {
   "augmented_training_sha256": "f070792596dacacbcf3f45a7405c33fff06b9a8c5b98d265ac42493bd0646828",
-  "best_validation_experiment": "original-mlp-300",
+  "best_validation_candidate": "prepared/mlp",
+  "best_validation_experiment": null,
   "comparisons": [
     {
       "accuracy_change_percentage_points": -2.1599999999999953,
       "augmented": {
+        "candidate_id": "augmented/logreg",
         "data_split_parameters": {
           "seed": 42,
           "validation_per_class": 1000
         },
         "dataset": "augmented",
-        "experiment": "augmented-logreg",
+        "experiment": null,
         "metrics": {
           "accuracy": 0.8243,
           "converged": 1,
-          "fit_seconds": 149.7342941040115,
+          "fit_seconds": 160.27080650799962,
           "macro_f1": 0.8225479731547471,
           "training_samples": 100000,
           "validation_samples": 10000
         },
         "model": "logreg",
+        "model_sha256": "1327004a74d4a332db4447531efc3d5883d4e847766929252c121b2b0b977c9b",
         "parameters": {
           "C": 1.0,
           "max_iter": 2000,
           "tol": 0.0001
         },
-        "revision": "8674d3ddcf9739e5d9b027410e2cd82905876fee",
+        "revision": null,
         "seed": 42
       },
       "macro_f1_change": -0.022187257059275156,
       "model": "logreg",
       "original": {
+        "candidate_id": "prepared/logreg",
         "data_split_parameters": {
           "seed": 42,
           "validation_per_class": 1000
         },
         "dataset": "prepared",
-        "experiment": "original-logreg-2000",
+        "experiment": null,
         "metrics": {
           "accuracy": 0.8459,
           "converged": 1,
-          "fit_seconds": 73.11761041099089,
+          "fit_seconds": 88.69787901200016,
           "macro_f1": 0.8447352302140223,
           "training_samples": 50000,
           "validation_samples": 10000
         },
         "model": "logreg",
+        "model_sha256": "7e662ea535c6bc6721b82e01d544805e796d7098fb897bc5feee97801a74f4dd",
         "parameters": {
           "C": 1.0,
           "max_iter": 2000,
           "tol": 0.0001
         },
-        "revision": "9157883b7dfa1b755a425e381df72d1253378800",
+        "revision": null,
         "seed": 42
       }
     },
     {
       "accuracy_change_percentage_points": -0.8400000000000074,
       "augmented": {
+        "candidate_id": "augmented/random_forest",
         "data_split_parameters": {
           "seed": 42,
           "validation_per_class": 1000
         },
         "dataset": "augmented",
-        "experiment": "augmented-random_forest",
+        "experiment": null,
         "metrics": {
           "accuracy": 0.8795,
           "converged": 1,
-          "fit_seconds": 195.62661303501227,
+          "fit_seconds": 252.0720883039994,
           "macro_f1": 0.8772360500399703,
           "training_samples": 100000,
           "validation_samples": 10000
         },
         "model": "random_forest",
+        "model_sha256": "4455ff4f1f49b9d68d14e324e6c53333ec9268df585df9b13609fe716783693b",
         "parameters": {
           "max_depth": null,
           "min_samples_leaf": 1,
           "n_estimators": 100
         },
-        "revision": "96442f4db503c668eb510f9bb7c5dd68f02e59de",
+        "revision": null,
         "seed": 42
       },
       "macro_f1_change": -0.00924118294393761,
       "model": "random_forest",
       "original": {
+        "candidate_id": "prepared/random_forest",
         "data_split_parameters": {
           "seed": 42,
           "validation_per_class": 1000
         },
         "dataset": "prepared",
-        "experiment": "original-random_forest",
+        "experiment": null,
         "metrics": {
           "accuracy": 0.8879,
           "converged": 1,
-          "fit_seconds": 76.50535315601155,
+          "fit_seconds": 97.57870538400039,
           "macro_f1": 0.8864772329839079,
           "training_samples": 50000,
           "validation_samples": 10000
         },
         "model": "random_forest",
+        "model_sha256": "0a970ebadb2e7510bb672de8df0d6913b308f15fed972df5bb2069c3b2e1110b",
         "parameters": {
           "max_depth": null,
           "min_samples_leaf": 1,
           "n_estimators": 100
         },
-        "revision": "1ce00a46d5bcc9fe6f96d172c3634a7f98c5620a",
+        "revision": null,
         "seed": 42
       }
     },
     {
       "accuracy_change_percentage_points": -1.3000000000000012,
       "augmented": {
+        "candidate_id": "augmented/mlp",
         "data_split_parameters": {
           "seed": 42,
           "validation_per_class": 1000
         },
         "dataset": "augmented",
-        "experiment": "augmented-mlp-300",
+        "experiment": null,
         "metrics": {
           "accuracy": 0.8794,
           "converged": 1,
-          "fit_seconds": 197.05203120800434,
+          "fit_seconds": 242.06990378200044,
           "macro_f1": 0.878212950529551,
           "training_samples": 100000,
           "validation_samples": 10000
         },
         "model": "mlp",
+        "model_sha256": "4bdebc489f26b91dc9e6872b71f9b8e11237d4096eda3b02e82eb21ccebcf84a",
         "parameters": {
           "alpha": 0.0001,
           "batch_size": 256,
@@ -136,27 +147,29 @@
           "max_iter": 300,
           "tol": 0.0001
         },
-        "revision": "c9f78d0c38ad73a952e30051d42d86f2c76449ba",
+        "revision": null,
         "seed": 42
       },
       "macro_f1_change": -0.013560162044613855,
       "model": "mlp",
       "original": {
+        "candidate_id": "prepared/mlp",
         "data_split_parameters": {
           "seed": 42,
           "validation_per_class": 1000
         },
         "dataset": "prepared",
-        "experiment": "original-mlp-300",
+        "experiment": null,
         "metrics": {
           "accuracy": 0.8924,
           "converged": 1,
-          "fit_seconds": 42.25007141599781,
+          "fit_seconds": 57.879135256000154,
           "macro_f1": 0.8917731125741648,
           "training_samples": 50000,
           "validation_samples": 10000
         },
         "model": "mlp",
+        "model_sha256": "4d14c9ec9385aa0a3303b56a5e5fccbae927e9aacee5c47555bd9f5e8c7ebef9",
         "parameters": {
           "alpha": 0.0001,
           "batch_size": 256,
@@ -167,14 +180,14 @@
           "max_iter": 300,
           "tol": 0.0001
         },
-        "revision": "ff5efafd3151b6b5fcfe258fe57af2190111c451",
+        "revision": null,
         "seed": 42
       }
     }
   ],
   "evaluation_split": "validation",
+  "execution_mode": "one_pipeline_two_groups_of_three_processes",
   "selection_metric": "macro_f1",
   "test_evaluated": false,
-  "validation_samples": 10000,
   "validation_sha256": "0276c467fdc74370793d6e7b02a98d3622653747c12a29ecb38442573d097e9a"
 }

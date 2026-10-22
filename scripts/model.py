@@ -202,7 +202,8 @@ def write_json(path: Path, value: dict) -> None:
     atomic_write(path, lambda stream: stream.write(content))
 
 
-def train(config: dict, prepared: Path, directory: Path) -> dict:
+def train(config: dict, prepared: Path, directory: Path, *,
+          fit_barrier=None, fit_trace: dict | None = None) -> dict:
     config = validate_config(config)
     name = config["train"]["model"]
     if config["train"]["dataset"] == "augmented":
@@ -215,11 +216,20 @@ def train(config: dict, prepared: Path, directory: Path) -> dict:
     part = subset(loaded, config["train"]["limit_per_class"], config["train"]["seed"])
     pipeline = estimator(config)
     inputs = features(part["images"])
+    # A parallel group releases all three workers only after their inputs are ready.
+    if fit_barrier is not None:
+        fit_barrier.wait(timeout=180)
     started = time.perf_counter()
     with progress(f"Training {name} on {len(inputs)} images"), threadpool_limits(limits=1):
         with warnings.catch_warnings(record=True) as caught:
             warnings.simplefilter("always", ConvergenceWarning)
-            pipeline.fit(inputs, part["labels"])
+            if fit_trace is not None:
+                fit_trace["fit_started_unix"] = time.time()
+            try:
+                pipeline.fit(inputs, part["labels"])
+            finally:
+                if fit_trace is not None:
+                    fit_trace["fit_finished_unix"] = time.time()
     warning_messages = sorted({str(item.message) for item in caught
                                if issubclass(item.category, ConvergenceWarning)})
     for item in caught:

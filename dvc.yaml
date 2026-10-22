@@ -9,45 +9,97 @@ stages:
       - data.validation_per_class
     outs:
       - data/prepared
-  train:
-    cmd: python scripts/model.py train
+  train_original:
+    cmd: python scripts/parallel.py train --dataset prepared
     deps:
+      - scripts/parallel.py
       - scripts/model.py
+      - scripts/finalize.py
       - scripts/prepare_data.py
       - scripts/augment_data.py
-      - data/${train.dataset}
+      - data/prepared
     params:
-      - train
+      - train.seed
+      - train.limit_per_class
       - logreg
       - random_forest
       - mlp
     outs:
-      - models/current
-  evaluate:
-    cmd: python scripts/model.py evaluate
-    deps:
-      - scripts/model.py
-      - scripts/prepare_data.py
-      - scripts/augment_data.py
-      - models/current
-      - data/prepared/validation.npz
-      - data/prepared/summary.json
+      - models/parallel/prepared
+      - reports/parallel/prepared
+      - metrics/parallel/prepared/completed.json
     metrics:
-      - metrics/validation.json:
+      - metrics/parallel/prepared/logreg.json:
           cache: true
-    outs:
-      - reports/validation_details.json
-      - reports/validation_predictions.npz
+      - metrics/parallel/prepared/random_forest.json:
+          cache: true
+      - metrics/parallel/prepared/mlp.json:
+          cache: true
   augment:
     cmd: python scripts/augment_data.py prepare
     deps:
       - scripts/augment_data.py
       - scripts/prepare_data.py
       - data/prepared
+      - metrics/parallel/prepared/completed.json
     params:
       - augmentation
     outs:
       - data/augmented
+  train_augmented:
+    cmd: python scripts/parallel.py train --dataset augmented
+    deps:
+      - scripts/parallel.py
+      - scripts/model.py
+      - scripts/finalize.py
+      - scripts/prepare_data.py
+      - scripts/augment_data.py
+      - data/prepared
+      - data/augmented
+    params:
+      - train.seed
+      - train.limit_per_class
+      - augmentation
+      - logreg
+      - random_forest
+      - mlp
+    outs:
+      - models/parallel/augmented
+      - reports/parallel/augmented
+      - metrics/parallel/augmented/completed.json
+    metrics:
+      - metrics/parallel/augmented/logreg.json:
+          cache: true
+      - metrics/parallel/augmented/random_forest.json:
+          cache: true
+      - metrics/parallel/augmented/mlp.json:
+          cache: true
+  compare:
+    cmd: python scripts/parallel.py compare
+    deps:
+      - scripts/parallel.py
+      - scripts/model.py
+      - scripts/finalize.py
+      - scripts/prepare_data.py
+      - scripts/augment_data.py
+      - params.yaml
+      - data/prepared/summary.json
+      - data/augmented/summary.json
+      - models/parallel/prepared
+      - models/parallel/augmented
+      - metrics/parallel/prepared
+      - metrics/parallel/augmented
+      - reports/parallel/prepared
+      - reports/parallel/augmented
+    outs:
+      - models/current
+      - reports/validation_details.json
+      - reports/validation_predictions.npz
+      - results/validation_comparison.json:
+          cache: false
+    metrics:
+      - metrics/validation.json:
+          cache: true
   freeze:
     cmd: python scripts/finalize.py freeze
     deps:

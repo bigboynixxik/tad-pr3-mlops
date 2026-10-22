@@ -12,6 +12,7 @@ stages:
       hash: md5
       md5: ee270f450cbb9b53b6aa7129847ab3f6
       size: 14013
+      isexec: true
     params:
       params.yaml:
         data.seed: 42
@@ -128,6 +129,10 @@ stages:
       md5: 78624be6d6819bd3c9faa0141e8de182.dir
       size: 30971045
       nfiles: 4
+    - path: metrics/parallel/prepared/completed.json
+      hash: md5
+      md5: 55e74ee695abdccffefc5eaaff95bc33
+      size: 200
     - path: scripts/augment_data.py
       hash: md5
       md5: f026750ce09394f73a0494c5f257adff
@@ -162,17 +167,17 @@ stages:
       isexec: true
     - path: metrics/validation.json
       hash: md5
-      md5: 420572dcb677a818351a397e5c939b0d
-      size: 173
+      md5: ec2214d7724500a31faf0f0765cc0cbe
+      size: 174
     - path: models/current
       hash: md5
-      md5: dcef2b519827ded061a2d03bba7f230e.dir
-      size: 1601238
+      md5: d27f1cafc024d1638d84545f0c3c3a38.dir
+      size: 1601239
       nfiles: 2
     - path: results/validation_comparison.json
       hash: md5
-      md5: 8c9eff4bc7f10c9461b81b8e95e257d7
-      size: 5246
+      md5: 1a163e494a123bb33f3702a399087f69
+      size: 5806
     - path: scripts/augment_data.py
       hash: md5
       md5: f026750ce09394f73a0494c5f257adff
@@ -180,14 +185,12 @@ stages:
       isexec: true
     - path: scripts/finalize.py
       hash: md5
-      md5: c92f8d85b462cdb5de4cc291c8148e4e
-      size: 14365
-      isexec: true
+      md5: d2fc495122a48d00a79814b3e892c88f
+      size: 14738
     - path: scripts/model.py
       hash: md5
-      md5: 35d3565a8473d3bac6b2c9acfc7093ed
-      size: 16394
-      isexec: true
+      md5: b87736adddb9f3c14e655e2b72ae1478
+      size: 16858
     - path: scripts/prepare_data.py
       hash: md5
       md5: ee270f450cbb9b53b6aa7129847ab3f6
@@ -196,8 +199,8 @@ stages:
     outs:
     - path: models/selected
       hash: md5
-      md5: e903c598c502cdb2adca21deda382a95.dir
-      size: 1601805
+      md5: 12d2d36490d90aace45a8542153ca321.dir
+      size: 1601854
       nfiles: 3
   test:
     cmd: python scripts/finalize.py test
@@ -214,8 +217,8 @@ stages:
       isexec: true
     - path: models/selected
       hash: md5
-      md5: e903c598c502cdb2adca21deda382a95.dir
-      size: 1601805
+      md5: 12d2d36490d90aace45a8542153ca321.dir
+      size: 1601854
       nfiles: 3
     - path: scripts/augment_data.py
       hash: md5
@@ -224,14 +227,12 @@ stages:
       isexec: true
     - path: scripts/finalize.py
       hash: md5
-      md5: c92f8d85b462cdb5de4cc291c8148e4e
-      size: 14365
-      isexec: true
+      md5: d2fc495122a48d00a79814b3e892c88f
+      size: 14738
     - path: scripts/model.py
       hash: md5
-      md5: 35d3565a8473d3bac6b2c9acfc7093ed
-      size: 16394
-      isexec: true
+      md5: b87736adddb9f3c14e655e2b72ae1478
+      size: 16858
     - path: scripts/prepare_data.py
       hash: md5
       md5: ee270f450cbb9b53b6aa7129847ab3f6
@@ -244,35 +245,289 @@ stages:
       size: 113
     - path: reports/test_details.json
       hash: md5
-      md5: a1f3d690dfb61c8ca8cea3ac8646a8d7
-      size: 3842
+      md5: ef359543e47214465c84e250a4ebf492
+      size: 3894
     - path: reports/test_predictions.npz
       hash: md5
       md5: c62128a4bdc75e15db626906e541a8bd
       size: 24742
     - path: results/final_test.json
       hash: md5
-      md5: b45eb87b49657dc56b5cdf7ab7d87aa4
-      size: 1189
+      md5: 8676dc2681fd5d41ebaefb8be05ed5bc
+      size: 1241
   plots:
     cmd: python scripts/finalize.py plots
     deps:
     - path: reports/test_details.json
       hash: md5
-      md5: a1f3d690dfb61c8ca8cea3ac8646a8d7
-      size: 3842
+      md5: ef359543e47214465c84e250a4ebf492
+      size: 3894
     - path: results/validation_comparison.json
       hash: md5
-      md5: 8c9eff4bc7f10c9461b81b8e95e257d7
-      size: 5246
+      md5: 1a163e494a123bb33f3702a399087f69
+      size: 5806
     - path: scripts/finalize.py
       hash: md5
-      md5: c92f8d85b462cdb5de4cc291c8148e4e
-      size: 14365
-      isexec: true
+      md5: d2fc495122a48d00a79814b3e892c88f
+      size: 14738
     outs:
     - path: results/figures
       hash: md5
-      md5: 590a48e52a60fe631de4c2922f41e2b2.dir
-      size: 973529
+      md5: 291a5f3086e6a3ac92745ff405c5222c.dir
+      size: 981513
       nfiles: 8
+  train_original:
+    cmd: python scripts/parallel.py train --dataset prepared
+    deps:
+    - path: data/prepared
+      hash: md5
+      md5: 78624be6d6819bd3c9faa0141e8de182.dir
+      size: 30971045
+      nfiles: 4
+    - path: scripts/augment_data.py
+      hash: md5
+      md5: f026750ce09394f73a0494c5f257adff
+      size: 16005
+      isexec: true
+    - path: scripts/finalize.py
+      hash: md5
+      md5: d2fc495122a48d00a79814b3e892c88f
+      size: 14738
+    - path: scripts/model.py
+      hash: md5
+      md5: b87736adddb9f3c14e655e2b72ae1478
+      size: 16858
+    - path: scripts/parallel.py
+      hash: md5
+      md5: 953e56ffb398f45480109cc6891330e0
+      size: 12891
+    - path: scripts/prepare_data.py
+      hash: md5
+      md5: ee270f450cbb9b53b6aa7129847ab3f6
+      size: 14013
+      isexec: true
+    params:
+      params.yaml:
+        logreg:
+          C: 1.0
+          max_iter: 2000
+          tol: 0.0001
+        mlp:
+          hidden_layer_sizes:
+          - 128
+          max_iter: 300
+          batch_size: 256
+          learning_rate_init: 0.001
+          alpha: 0.0001
+          tol: 0.0001
+        random_forest:
+          n_estimators: 100
+          max_depth:
+          min_samples_leaf: 1
+        train.limit_per_class: 0
+        train.seed: 42
+    outs:
+    - path: metrics/parallel/prepared/completed.json
+      hash: md5
+      md5: 55e74ee695abdccffefc5eaaff95bc33
+      size: 200
+    - path: metrics/parallel/prepared/logreg.json
+      hash: md5
+      md5: 2a20cda54d6aa8235bfe989420741f9d
+      size: 173
+    - path: metrics/parallel/prepared/mlp.json
+      hash: md5
+      md5: ec2214d7724500a31faf0f0765cc0cbe
+      size: 174
+    - path: metrics/parallel/prepared/random_forest.json
+      hash: md5
+      md5: dd23919207d743784129bd7f47ce5a35
+      size: 173
+    - path: models/parallel/prepared
+      hash: md5
+      md5: ca1f6e3a233182996b838f8d95b7b918.dir
+      size: 20817343
+      nfiles: 6
+    - path: reports/parallel/prepared
+      hash: md5
+      md5: 0a8b5cb44583b20f0a00aef055948cd4.dir
+      size: 91199
+      nfiles: 13
+  train_augmented:
+    cmd: python scripts/parallel.py train --dataset augmented
+    deps:
+    - path: data/augmented
+      hash: md5
+      md5: 1ae85143b48b8125c60c44e72cad95aa.dir
+      size: 45216090
+      nfiles: 3
+    - path: data/prepared
+      hash: md5
+      md5: 78624be6d6819bd3c9faa0141e8de182.dir
+      size: 30971045
+      nfiles: 4
+    - path: scripts/augment_data.py
+      hash: md5
+      md5: f026750ce09394f73a0494c5f257adff
+      size: 16005
+      isexec: true
+    - path: scripts/finalize.py
+      hash: md5
+      md5: d2fc495122a48d00a79814b3e892c88f
+      size: 14738
+    - path: scripts/model.py
+      hash: md5
+      md5: b87736adddb9f3c14e655e2b72ae1478
+      size: 16858
+    - path: scripts/parallel.py
+      hash: md5
+      md5: 953e56ffb398f45480109cc6891330e0
+      size: 12891
+    - path: scripts/prepare_data.py
+      hash: md5
+      md5: ee270f450cbb9b53b6aa7129847ab3f6
+      size: 14013
+      isexec: true
+    params:
+      params.yaml:
+        augmentation:
+          seed: 42
+          copies_per_image: 1
+          rotation_degrees: 10.0
+          max_shift_pixels: 2
+          horizontal_flip_probability: 0.5
+        logreg:
+          C: 1.0
+          max_iter: 2000
+          tol: 0.0001
+        mlp:
+          hidden_layer_sizes:
+          - 128
+          max_iter: 300
+          batch_size: 256
+          learning_rate_init: 0.001
+          alpha: 0.0001
+          tol: 0.0001
+        random_forest:
+          n_estimators: 100
+          max_depth:
+          min_samples_leaf: 1
+        train.limit_per_class: 0
+        train.seed: 42
+    outs:
+    - path: metrics/parallel/augmented/completed.json
+      hash: md5
+      md5: a0eca9d303e64c921dd07018d5dece5d
+      size: 201
+    - path: metrics/parallel/augmented/logreg.json
+      hash: md5
+      md5: 124d26a92825caae2f9ae9f8820c55a9
+      size: 175
+    - path: metrics/parallel/augmented/mlp.json
+      hash: md5
+      md5: 9e1cecb8de89d7901bb0d42017d2a241
+      size: 174
+    - path: metrics/parallel/augmented/random_forest.json
+      hash: md5
+      md5: 2d6876b36cdabc7bd22eadf32af61a7c
+      size: 174
+    - path: models/parallel/augmented
+      hash: md5
+      md5: db41a4a53a59879c845da43083e74f9e.dir
+      size: 48694633
+      nfiles: 6
+    - path: reports/parallel/augmented
+      hash: md5
+      md5: 696b58c0db4d8f371730e1415904bd97.dir
+      size: 93305
+      nfiles: 13
+  compare:
+    cmd: python scripts/parallel.py compare
+    deps:
+    - path: data/augmented/summary.json
+      hash: md5
+      md5: 970b9492c7a3d16bc492ab1456f4b5cb
+      size: 1505
+    - path: data/prepared/summary.json
+      hash: md5
+      md5: fc1f6482dce25475d3ce4dc0c65c0a34
+      size: 2229
+      isexec: true
+    - path: metrics/parallel/augmented
+      hash: md5
+      md5: 0744a0dfe2c8f5cfc55e20a946135449.dir
+      size: 783
+      nfiles: 5
+    - path: metrics/parallel/prepared
+      hash: md5
+      md5: 982a65ca98cd10c12b66d7800ddb9ed6.dir
+      size: 779
+      nfiles: 5
+    - path: models/parallel/augmented
+      hash: md5
+      md5: db41a4a53a59879c845da43083e74f9e.dir
+      size: 48694633
+      nfiles: 6
+    - path: models/parallel/prepared
+      hash: md5
+      md5: ca1f6e3a233182996b838f8d95b7b918.dir
+      size: 20817343
+      nfiles: 6
+    - path: params.yaml
+      hash: md5
+      md5: d4bce1ca41a9600f583abe41af1eeea3
+      size: 492
+    - path: reports/parallel/augmented
+      hash: md5
+      md5: 696b58c0db4d8f371730e1415904bd97.dir
+      size: 93305
+      nfiles: 13
+    - path: reports/parallel/prepared
+      hash: md5
+      md5: 0a8b5cb44583b20f0a00aef055948cd4.dir
+      size: 91199
+      nfiles: 13
+    - path: scripts/augment_data.py
+      hash: md5
+      md5: f026750ce09394f73a0494c5f257adff
+      size: 16005
+      isexec: true
+    - path: scripts/finalize.py
+      hash: md5
+      md5: d2fc495122a48d00a79814b3e892c88f
+      size: 14738
+    - path: scripts/model.py
+      hash: md5
+      md5: b87736adddb9f3c14e655e2b72ae1478
+      size: 16858
+    - path: scripts/parallel.py
+      hash: md5
+      md5: 953e56ffb398f45480109cc6891330e0
+      size: 12891
+    - path: scripts/prepare_data.py
+      hash: md5
+      md5: ee270f450cbb9b53b6aa7129847ab3f6
+      size: 14013
+      isexec: true
+    outs:
+    - path: metrics/validation.json
+      hash: md5
+      md5: ec2214d7724500a31faf0f0765cc0cbe
+      size: 174
+    - path: models/current
+      hash: md5
+      md5: d27f1cafc024d1638d84545f0c3c3a38.dir
+      size: 1601239
+      nfiles: 2
+    - path: reports/validation_details.json
+      hash: md5
+      md5: ec5c8eec4d978d79e41272848f7677a7
+      size: 4421
+    - path: reports/validation_predictions.npz
+      hash: md5
+      md5: 5cabd6a2c036f6da4b7657e39afbee59
+      size: 25070
+    - path: results/validation_comparison.json
+      hash: md5
+      md5: 1a163e494a123bb33f3702a399087f69
+      size: 5806

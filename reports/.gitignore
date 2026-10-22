@@ -2,3 +2,4 @@
 /validation_predictions.npz
 /test_details.json
 /test_predictions.npz
+/parallel

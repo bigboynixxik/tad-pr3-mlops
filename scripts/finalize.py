@@ -43,7 +43,11 @@ def choose(comparison: dict) -> dict:
         if candidate["metrics"]["converged"] != 1:
             raise ValueError("Final comparison contains an unconverged model.")
     selected = max(candidates, key=lambda item: item["metrics"]["macro_f1"])
-    if selected["experiment"] != comparison.get("best_validation_experiment"):
+    if "best_validation_candidate" in comparison:
+        matches_selection = selected.get("candidate_id") == comparison["best_validation_candidate"]
+    else:
+        matches_selection = selected["experiment"] == comparison.get("best_validation_experiment")
+    if not matches_selection:
         raise ValueError("Declared selection differs from validation results.")
     return selected
 
@@ -84,6 +88,9 @@ def freeze(current: Path, validation_metrics: Path, comparison_path: Path,
         "training_metadata_sha256": digest(current / "training.json"),
         "decision_made_before_test": True,
     }
+    if "candidate_id" in selected:
+        selection["candidate_id"] = selected["candidate_id"]
+        selection["execution_mode"] = comparison["execution_mode"]
     for name in ("model.joblib", "training.json"):
         with (current / name).open("rb") as stream:
             atomic_write(output / name, lambda target: shutil.copyfileobj(stream, target))
